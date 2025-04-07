@@ -25,6 +25,8 @@ final class HabitsViewController: UIViewController {
     }
     
     @objc private func addHabit() {
-        print("Add habit")
+        let createHabitVC = CreateHabitViewController()
+        createHabitVC.navigationItem.hidesBackButton = true
+        navigationController?.pushViewController(createHabitVC, animated: true)
     }
 }
