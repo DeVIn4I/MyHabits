@@ -8,6 +8,8 @@
 import UIKit
 
 final class TabBarViewController: UITabBarController {
+    
+    private let store = HabitsStore.shared
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -16,7 +18,7 @@ final class TabBarViewController: UITabBarController {
     }
     
     private func setupControllers() {
-        let habitsVC = HabitsViewController()
+        let habitsVC = HabitsViewController(store: store)
         habitsVC.tabBarItem = UITabBarItem(
             title: "Привычки",
             image: UIImage(named: "habits_tab_icon"),

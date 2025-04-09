@@ -17,8 +17,6 @@ extension UIViewController {
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
         navigationController?.navigationBar.prefersLargeTitles = isLargeTitle
-        
-        navigationItem.rightBarButtonItem?.tintColor = .habitsPurple
-        navigationItem.leftBarButtonItem?.tintColor = .habitsPurple
+        navigationController?.navigationBar.tintColor = .habitsPurple
     }
 }

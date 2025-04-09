@@ -9,7 +9,8 @@ import UIKit
 
 final class HabitsViewController: UIViewController {
     
-    private let store = HabitsStore.shared
+    //MARK: - Private properties
+    private let store: HabitsStore
     
     private lazy var habitsCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -26,35 +27,63 @@ final class HabitsViewController: UIViewController {
         collectionView.backgroundColor = .clear
         collectionView.dataSource = self
         collectionView.delegate = self
+        collectionView.isHidden = true
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
     }()
-
+    
+    private lazy var emptyHabitsLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .label
+        label.font = .systemFont(ofSize: 17, weight: .semibold)
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        label.text = "Нет отслеживаемых привычек.\nНажмите \"+\" для создания"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    //MARK: - Initialization
+    init(store: HabitsStore) {
+        self.store = store
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .habitsLightGray
         setupNavigationBar(isLargeTitle: true)
         title = "Сегодня"
-        
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             image: UIImage(systemName: "plus"),
             style: .plain,
             target: self,
             action: #selector(addHabit)
         )
-        navigationItem.rightBarButtonItem?.tintColor = .habitsPurple
-        
         setupViews()
         setupConstraints()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .always
+        
+        let isHaveHabits = store.habits.count > 0
+        habitsCollectionView.isHidden = !isHaveHabits
+        emptyHabitsLabel.isHidden = isHaveHabits
         habitsCollectionView.reloadData()
     }
     
+    //MARK: - Private Methods
     private func setupViews() {
         view.addSubview(habitsCollectionView)
+        view.addSubview(emptyHabitsLabel)
     }
     
     private func setupConstraints() {
@@ -63,9 +92,13 @@ final class HabitsViewController: UIViewController {
             habitsCollectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             habitsCollectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             habitsCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -22),
+            
+            emptyHabitsLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptyHabitsLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
     }
     
+    //MARK: - Objc Methods
     @objc private func addHabit() {
         let createHabitVC = CreateHabitViewController()
         createHabitVC.navigationItem.hidesBackButton = true
@@ -73,6 +106,7 @@ final class HabitsViewController: UIViewController {
     }
 }
 
+//MARK: - HabitsViewController: UICollectionViewDataSource
 extension HabitsViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         section == 0 ? 1 : store.habits.count
@@ -101,6 +135,7 @@ extension HabitsViewController: UICollectionViewDataSource {
             ) as? HabitCollectionViewCell else {
                 return UICollectionViewCell()
             }
+            
             let habit = store.habits[indexPath.item]
             cell.configure(with: habit)
             cell.onTrackHabit = { [weak self] in
@@ -109,12 +144,12 @@ extension HabitsViewController: UICollectionViewDataSource {
                     self?.habitsCollectionView.reloadData()
                 }
             }
-            
             return cell
         }
     }
 }
 
+//MARK: - HabitsViewController: UICollectionViewDelegateFlowLayout
 extension HabitsViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(
         _ collectionView: UICollectionView,
@@ -135,5 +170,11 @@ extension HabitsViewController: UICollectionViewDelegateFlowLayout {
         } else {
             return .zero
         }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let habit = store.habits[indexPath.item]
+        let detailsVC = DetailsHabitViewController(habit: habit, store: store)
+        navigationController?.pushViewController(detailsVC, animated: true)
     }
 }

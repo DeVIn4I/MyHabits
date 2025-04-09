@@ -9,6 +9,7 @@ import UIKit
 
 final class HabitCollectionViewCell: UICollectionViewCell {
     
+    //MARK: - Private computed properties
     private lazy var habitNameLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 17, weight: .medium)
@@ -93,14 +94,21 @@ final class HabitCollectionViewCell: UICollectionViewCell {
         return imageView
     }()
     
+    //MARK: - Public Properties
     var onTrackHabit: (() -> Void)?
     
+    //MARK: - Initialization
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupViews()
         setupConstraints()
     }
     
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    //MARK: - Override Methods
     override func didMoveToSuperview() {
         super.didMoveToSuperview()
         layoutIfNeeded()
@@ -108,30 +116,23 @@ final class HabitCollectionViewCell: UICollectionViewCell {
         trackHabitView.layer.cornerRadius = trackHabitView.frame.width / 2
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
+    //MARK: - Public Methods
     func configure(with habit: Habit) {
-        let isAlreadyTakenToday = habit.isAlreadyTakenToday
-
         habitNameLabel.text = habit.name
         habitNameLabel.textColor = habit.color
         habitDateLabel.text = habit.dateString
         untrackHabitView.layer.borderColor = habit.color.cgColor
         trackHabitView.backgroundColor = habit.color
+        habitCountLabel.text = "Счётчик: \(habit.trackDates.count)"
         
-        untrackHabitView.alpha = isAlreadyTakenToday ? 0 : 1
-        trackHabitView.alpha = isAlreadyTakenToday ? 1 : 0
+        untrackHabitView.alpha = habit.isAlreadyTakenToday ? 0 : 1
+        trackHabitView.alpha = habit.isAlreadyTakenToday ? 1 : 0
     }
     
+    //MARK: - Private Methods
     private func setupViews() {
-        [
-            labelsStackView, trackHabitButton
-        ].forEach { contentView.addSubview($0) }
-        trackHabitButton.addSubview(untrackHabitView)
-        trackHabitButton.addSubview(trackHabitView)
-        
+        [labelsStackView, trackHabitButton].forEach { contentView.addSubview($0) }
+        [untrackHabitView, trackHabitView].forEach { trackHabitButton.addSubview($0) }
         trackHabitView.addSubview(checkmarkImageView)
         
         contentView.backgroundColor = .white
@@ -165,6 +166,8 @@ final class HabitCollectionViewCell: UICollectionViewCell {
             checkmarkImageView.centerYAnchor.constraint(equalTo: trackHabitView.centerYAnchor),
         ])
     }
+    
+    //MARK: - Objc Methods
     
     @objc private func trackHabitButtonTapped() {
         onTrackHabit?()

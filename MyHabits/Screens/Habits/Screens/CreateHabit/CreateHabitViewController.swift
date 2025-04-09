@@ -28,10 +28,7 @@ final class CreateHabitViewController: UIViewController {
             action: #selector(save)
         )
         title = "Создать"
-        navigationItem.largeTitleDisplayMode = .never
-        navigationItem.leftBarButtonItem?.tintColor = .habitsPurple
-        navigationItem.rightBarButtonItem?.tintColor = .habitsPurple
-        
+        navigationItem.largeTitleDisplayMode = .never        
         navigationItem.rightBarButtonItem?.isEnabled = false
         createHabitView.onFormChanged = { [weak self] isValid in
             self?.navigationItem.rightBarButtonItem?.isEnabled = isValid
