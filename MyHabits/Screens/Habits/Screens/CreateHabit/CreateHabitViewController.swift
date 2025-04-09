@@ -32,6 +32,11 @@ final class CreateHabitViewController: UIViewController {
         navigationItem.leftBarButtonItem?.tintColor = .habitsPurple
         navigationItem.rightBarButtonItem?.tintColor = .habitsPurple
         
+        navigationItem.rightBarButtonItem?.isEnabled = false
+        createHabitView.onFormChanged = { [weak self] isValid in
+            self?.navigationItem.rightBarButtonItem?.isEnabled = isValid
+        }
+        
         view.addSubview(createHabitView)
         createHabitView.presentViewController = self
         createHabitView.translatesAutoresizingMaskIntoConstraints = false
@@ -39,8 +44,7 @@ final class CreateHabitViewController: UIViewController {
         NSLayoutConstraint.activate([
             createHabitView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             createHabitView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            createHabitView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-//            createHabitView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            createHabitView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
         ])
     }
 
@@ -50,5 +54,6 @@ final class CreateHabitViewController: UIViewController {
     
     @objc private func save() {
         createHabitView.saveHabit()
+        navigationController?.popViewController(animated: true)
     }
 }

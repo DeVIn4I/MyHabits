@@ -114,7 +114,7 @@ final class CreateHabitView: UIView {
     
     // MARK: - Public Properties
     weak var presentViewController: UIViewController?
-    
+    var onFormChanged: ((Bool) -> Void)?
     // MARK: - Initializers
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -134,7 +134,6 @@ final class CreateHabitView: UIView {
             let date = habitTime,
             let color = habitColor
         else { return }
-        
         let habit = Habit(name: name, date: date, color: color)
         HabitsStore.shared.habits.append(habit)
     }
@@ -173,7 +172,7 @@ final class CreateHabitView: UIView {
     
     private func updateChoiseLabel() {
         let baseText = "Каждый день в "
-        let timeText = choiseTimeLabel.text ?? "10:00 AM"
+        let timeText = choiseTimeLabel.text ?? "..."
         let attributedText = NSMutableAttributedString(
             string: baseText,
             attributes: [.font: UIFont.systemFont(ofSize: 17, weight: .regular)]
@@ -198,9 +197,17 @@ final class CreateHabitView: UIView {
         presentViewController?.present(colorPicker, animated: true)
     }
     
+    private func validForm() {
+        let isValid = !(habitName?.isEmpty ?? true) &&
+            habitTime != nil &&
+            habitColor != nil
+        onFormChanged?(isValid)
+    }
+    
     //MARK: - Objc Methods
     @objc private func titleTextFieldEditing(sender: UITextField) {
         habitName = sender.text ?? ""
+        validForm()
     }
     
     @objc private func didTapColorView() {
@@ -214,6 +221,7 @@ extension CreateHabitView: UIColorPickerViewControllerDelegate {
         let color = viewController.selectedColor
         colorView.backgroundColor = color
         habitColor = color
+        validForm()
     }
 }
 
@@ -236,6 +244,7 @@ extension CreateHabitView: UIPickerViewDelegate {
         choiseTimeLabel.text = timeString
         updateChoiseLabel()
         habitTime = Date.makeDate(from: timeString)
+        validForm()
     }
 }
 
