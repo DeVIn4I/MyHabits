@@ -78,7 +78,7 @@ final class DetailsHabitViewController: UIViewController {
     
     //MARK: - Objc Methods
     @objc private func edtiHabit() {
-        let createHabitVC = CreateOrEditHabitViewController(mode: .edit(habit))
+        let createHabitVC = CreateOrEditHabitViewController(mode: .edit(habit), store: store)
         createHabitVC.navigationItem.hidesBackButton = true
         navigationController?.pushViewController(createHabitVC, animated: true)
     }
