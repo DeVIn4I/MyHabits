@@ -55,7 +55,7 @@ final class ProgressCollectionViewCell: UICollectionViewCell {
     }
     
     func configure(with progress: Float) {
-        progressView.progress = progress
+        progressView.setProgress(progress, animated: true)
         percentLabel.text = "\(Int(progress * 100))%"
     }
     

@@ -100,9 +100,9 @@ final class HabitsViewController: UIViewController {
     
     //MARK: - Objc Methods
     @objc private func addHabit() {
-        let createHabitVC = CreateOrEditHabitViewController(mode: .create)
-        createHabitVC.navigationItem.hidesBackButton = true
-        navigationController?.pushViewController(createHabitVC, animated: true)
+        let createOrEditHabitVC = CreateOrEditHabitViewController(mode: .create, store: store)
+        createOrEditHabitVC.navigationItem.hidesBackButton = true
+        navigationController?.pushViewController(createOrEditHabitVC, animated: true)
     }
 }
 
@@ -141,6 +141,9 @@ extension HabitsViewController: UICollectionViewDataSource {
             cell.onTrackHabit = { [weak self] in
                 if !habit.isAlreadyTakenToday {
                     self?.store.track(habit)
+                    self?.habitsCollectionView.reloadData()
+                } else {
+                    habit.trackDates.removeLast()
                     self?.habitsCollectionView.reloadData()
                 }
             }

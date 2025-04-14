@@ -11,12 +11,12 @@ final class InfoViewController: UIViewController {
     
     private lazy var infoTextView: UITextView = {
         let attributedText = NSMutableAttributedString(
-            string: Constants.Text.infoTextHeader,
+            string: Constants.Text.Info.infoTextHeader,
             attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20, weight: .semibold)]
         )
         attributedText.append(
             NSAttributedString(
-                string: Constants.Text.infoText,
+                string: Constants.Text.Info.infoText,
                 attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 17, weight: .regular)]
             )
         )

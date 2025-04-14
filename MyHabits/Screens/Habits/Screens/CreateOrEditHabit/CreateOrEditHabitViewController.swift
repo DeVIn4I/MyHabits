@@ -14,10 +14,10 @@ enum Mode {
 
 final class CreateOrEditHabitViewController: UIViewController {
     
+    //MARK: - Private Properties
     private let createOrEditHabitView = CreateOrEditHabitView()
     private let mode: Mode
-    
-    private let store = HabitsStore.shared
+    private let store: HabitsStore
     private var habit: Habit?
     
     private lazy var deleteHabitButton: UIButton = {
@@ -30,8 +30,10 @@ final class CreateOrEditHabitViewController: UIViewController {
         return button
     }()
     
-    init(mode: Mode) {
+    //MARK: - Initialization
+    init(mode: Mode, store: HabitsStore) {
         self.mode = mode
+        self.store = store
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -39,9 +41,15 @@ final class CreateOrEditHabitViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        setupViews()
+        setupConstraints()
+    }
+    
+    //MARK: - Private Methods
+    private func setupViews() {
         if case .edit(let habit) = mode {
             navigationItem.title = Constants.Text.CreateOrEditHabit.editTitle
             createOrEditHabitView.edit(habit)
@@ -51,7 +59,7 @@ final class CreateOrEditHabitViewController: UIViewController {
             navigationItem.title = Constants.Text.CreateOrEditHabit.createTitle
             deleteHabitButton.isHidden = true
         }
-
+        
         view.backgroundColor = .systemBackground
         navigationItem.leftBarButtonItem = UIBarButtonItem(
             title: Constants.Text.CreateOrEditHabit.leftBarButton,
@@ -65,18 +73,19 @@ final class CreateOrEditHabitViewController: UIViewController {
             target: self,
             action: #selector(save)
         )
-        navigationItem.largeTitleDisplayMode = .never        
+        navigationItem.largeTitleDisplayMode = .never
         navigationItem.rightBarButtonItem?.isEnabled = false
         createOrEditHabitView.onFormChanged = { [weak self] isValid in
             self?.navigationItem.rightBarButtonItem?.isEnabled = isValid
         }
         
+        view.addSubview(deleteHabitButton)
         view.addSubview(createOrEditHabitView)
         createOrEditHabitView.presentViewController = self
         createOrEditHabitView.translatesAutoresizingMaskIntoConstraints = false
-        
-        view.addSubview(deleteHabitButton)
-        
+    }
+    
+    private func setupConstraints() {
         NSLayoutConstraint.activate([
             createOrEditHabitView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             createOrEditHabitView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
@@ -89,6 +98,7 @@ final class CreateOrEditHabitViewController: UIViewController {
         ])
     }
     
+    //MARK: - Objc Methods
     @objc private func cancel() {
         navigationController?.popViewController(animated: true)
     }
