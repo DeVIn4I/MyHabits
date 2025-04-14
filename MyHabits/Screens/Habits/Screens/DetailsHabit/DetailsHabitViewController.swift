@@ -12,6 +12,7 @@ final class DetailsHabitViewController: UIViewController {
     //MARK: - Private Storage Properties
     private let habit: Habit
     private let store: HabitsStore
+    private let habitIndex: Int?
     
     //MARK: - Private Computed Properties
     private lazy var dateListTableView: UITableView = {
@@ -26,6 +27,7 @@ final class DetailsHabitViewController: UIViewController {
     init(habit: Habit, store: HabitsStore) {
         self.habit = habit
         self.store = store
+        self.habitIndex = store.habits.firstIndex(of: habit)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -41,12 +43,22 @@ final class DetailsHabitViewController: UIViewController {
         setupConstraints()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if let index = habitIndex {
+            let updateHabit = store.habits[index]
+            title = updateHabit.name
+            dateListTableView.reloadData()
+        }
+    }
+    
     //MARK: - Private Methods
     private func setupViews() {
         view.addSubview(dateListTableView)
         view.backgroundColor = .systemBackground
         navigationItem.rightBarButtonItem = UIBarButtonItem(
-            title: "Править",
+            title: Constants.Text.DetailsHabit.rightBarButton,
             style: .plain,
             target: self,
             action: #selector(edtiHabit)
@@ -66,7 +78,9 @@ final class DetailsHabitViewController: UIViewController {
     
     //MARK: - Objc Methods
     @objc private func edtiHabit() {
-        
+        let createHabitVC = CreateOrEditHabitViewController(mode: .edit(habit))
+        createHabitVC.navigationItem.hidesBackButton = true
+        navigationController?.pushViewController(createHabitVC, animated: true)
     }
 }
 
@@ -78,7 +92,7 @@ extension DetailsHabitViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let date = store.dates[indexPath.row]
+        let date = store.dates.reversed()[indexPath.row]
         let index = store.dates.firstIndex {
             Calendar.current.isDate($0, equalTo: date, toGranularity: .day)
         }
@@ -104,6 +118,6 @@ extension DetailsHabitViewController: UITableViewDataSource {
 //MARK: - DetailsHabitViewController: UITableViewDelegate
 extension DetailsHabitViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        "АКТИВНОСТЬ"
+        Constants.Text.DetailsHabit.titleForHeader
     }
 }

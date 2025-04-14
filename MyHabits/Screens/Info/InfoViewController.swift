@@ -32,7 +32,7 @@ final class InfoViewController: UIViewController {
         setupNavigationBar()
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        title = "Информация"
+        navigationItem.title = Constants.Text.Info.title
         
         view.addSubview(infoTextView)
         NSLayoutConstraint.activate([

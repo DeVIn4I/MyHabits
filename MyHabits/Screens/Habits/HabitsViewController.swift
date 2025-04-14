@@ -38,7 +38,7 @@ final class HabitsViewController: UIViewController {
         label.font = .systemFont(ofSize: 17, weight: .semibold)
         label.textAlignment = .center
         label.numberOfLines = 0
-        label.text = "Нет отслеживаемых привычек.\nНажмите \"+\" для создания"
+        label.text = Constants.Text.Habits.emptyHabitsList
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -58,7 +58,7 @@ final class HabitsViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .habitsLightGray
         setupNavigationBar(isLargeTitle: true)
-        title = "Сегодня"
+        navigationItem.title = Constants.Text.Habits.title
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             image: UIImage(systemName: "plus"),
             style: .plain,
@@ -100,7 +100,7 @@ final class HabitsViewController: UIViewController {
     
     //MARK: - Objc Methods
     @objc private func addHabit() {
-        let createHabitVC = CreateHabitViewController()
+        let createHabitVC = CreateOrEditHabitViewController(mode: .create)
         createHabitVC.navigationItem.hidesBackButton = true
         navigationController?.pushViewController(createHabitVC, animated: true)
     }
@@ -173,6 +173,9 @@ extension HabitsViewController: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        if indexPath.section == 0 { return }
+        
         let habit = store.habits[indexPath.item]
         let detailsVC = DetailsHabitViewController(habit: habit, store: store)
         navigationController?.pushViewController(detailsVC, animated: true)

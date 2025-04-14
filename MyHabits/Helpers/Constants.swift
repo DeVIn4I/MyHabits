@@ -9,7 +9,46 @@ import Foundation
 
 enum Constants {
     
+    enum Image {
+        enum TabBar {
+            static let habits = "habits_tab_icon"
+            static let info = "info.circle.fill"
+        }
+    }
+    
     enum Text {
+        
+        enum TabBarTitle {
+            static let habits = "Привычки"
+            static let info = "Информация"
+        }
+        
+        enum Habits {
+            static let emptyHabitsList = "Нет отслеживаемых привычек.\nНажмите \"+\" для создания"
+            static let title = "Сегодня"
+            static let progressTitle = "Всё получится!"
+        }
+        
+        enum CreateOrEditHabit {
+            static let createTitle = "Создать"
+            static let editTitle = "Править"
+            static let leftBarButton = "Отменить"
+            static let rightBarButton = "Сохранить"
+            static let habitTitle = "НАЗВАНИЕ"
+            static let habitPlaceholder = "Бегать по утрам, спать 8 часов и т.п."
+            static let habitColorTitle = "ЦВЕТ"
+            static let habitTimeTitle = "ВРЕМЯ"
+        }
+        
+        enum DetailsHabit {
+            static let rightBarButton = "Править"
+            static let titleForHeader = "АКТИВНОСТЬ"
+        }
+        
+        enum Info {
+            static let title = "Информация"
+        }
+        
         static let infoTextHeader = "Привычка за 21 день"
         static let infoText = """
         \n

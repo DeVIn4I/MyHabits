@@ -13,7 +13,7 @@ final class ProgressCollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         label.font = .systemFont(ofSize: 13, weight: .semibold)
         label.textColor = .systemGray
-        label.text = "Всё получится!"
+        label.text = Constants.Text.Habits.progressTitle
         return label
     }()
     

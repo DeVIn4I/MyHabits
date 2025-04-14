@@ -7,12 +7,14 @@
 
 import UIKit
 
-final class CreateHabitView: UIView {
+final class CreateOrEditHabitView: UIView {
     // MARK: - Private Stored Properties
     private let time = Time()
     private var habitName: String?
     private var habitTime: Date?
     private var habitColor: UIColor? = .random()
+    private var habitForEdit: Habit?
+    private let store = HabitsStore.shared
     
     // MARK: - Private Computed Properties
     private lazy var titleLabel: UILabel = {
@@ -20,7 +22,7 @@ final class CreateHabitView: UIView {
         label.textColor = .label
         label.font = .systemFont(ofSize: 13, weight: .semibold)
         label.textAlignment = .center
-        label.text = "НАЗВАНИЕ"
+        label.text = Constants.Text.CreateOrEditHabit.habitTitle
         return label
     }()
     
@@ -29,7 +31,7 @@ final class CreateHabitView: UIView {
         textField.borderStyle = .none
         textField.textColor = .habitsBlue
         textField.font = .systemFont(ofSize: 17, weight: .semibold)
-        let placeholderText = "Бегать по утрам, спать 8 часов и т.п."
+        let placeholderText = Constants.Text.CreateOrEditHabit.habitPlaceholder
         let placeholderAttributes: [NSAttributedString.Key: Any] = [
             .font: UIFont.systemFont(ofSize: 17, weight: .regular),
             .foregroundColor: UIColor.systemGray
@@ -57,7 +59,7 @@ final class CreateHabitView: UIView {
         label.textColor = .label
         label.font = .systemFont(ofSize: 13, weight: .semibold)
         label.textAlignment = .center
-        label.text = "ЦВЕТ"
+        label.text = Constants.Text.CreateOrEditHabit.habitColorTitle
         return label
     }()
     
@@ -85,7 +87,7 @@ final class CreateHabitView: UIView {
         label.textColor = .label
         label.font = .systemFont(ofSize: 13, weight: .semibold)
         label.textAlignment = .center
-        label.text = "ВРЕМЯ"
+        label.text = Constants.Text.CreateOrEditHabit.habitTimeTitle
         return label
     }()
     
@@ -128,14 +130,65 @@ final class CreateHabitView: UIView {
     }
     
     // MARK: - Public Methods
-    func saveHabit() {
+    func save() {
+        if habitForEdit != nil {
+            saveEditHabit()
+        } else {
+            saveNewHabit()
+        }
+    }
+    
+    func edit(_ habit: Habit) {
+        habitForEdit = habit
+        updateEditForm()
+    }
+    
+    func updateEditForm() {
+        guard let habitForEdit = habitForEdit else { return }
+        
+        habitName = habitForEdit.name
+        habitTime = habitForEdit.date
+        habitColor = habitForEdit.color
+                
+        titleTextField.text = habitForEdit.name
+        colorView.backgroundColor = habitForEdit.color
+        choiseTimeLabel.text = Date.makeString(from: habitForEdit.date)
+        updateChoiseLabel()
+        
+        if let (hour, minutes, meridiems) = Date.getTimeComponents(from: habitForEdit.date) {
+            if let hourIndex = time.hours.firstIndex(of: hour),
+               let minutesIndex = time.minutes.firstIndex(of: minutes),
+               let meridiemIndex = time.meridiems.firstIndex(of: meridiems)
+            {
+                pickerView.selectRow(hourIndex, inComponent: 0, animated: false)
+                pickerView.selectRow(minutesIndex, inComponent: 1, animated: false)
+                pickerView.selectRow(meridiemIndex, inComponent: 2, animated: false)
+            }
+        }
+    }
+    
+    private func saveNewHabit() {
         guard
             let name = habitName,
             let date = habitTime,
             let color = habitColor
         else { return }
         let habit = Habit(name: name, date: date, color: color)
-        HabitsStore.shared.habits.append(habit)
+        store.habits.append(habit)
+    }
+    
+    private func saveEditHabit() {
+        guard
+            let name = habitName,
+            let date = habitTime,
+            let color = habitColor,
+            let habit = habitForEdit,
+            let index = store.habits.firstIndex(of: habit)
+        else { return }
+        
+        store.habits[index].name = name
+        store.habits[index].date = date
+        store.habits[index].color = color
     }
     
     // MARK: - Private Methods
@@ -216,7 +269,7 @@ final class CreateHabitView: UIView {
 }
 
 //MARK: - CreateHabitView: UIColorPickerViewControllerDelegate
-extension CreateHabitView: UIColorPickerViewControllerDelegate {
+extension CreateOrEditHabitView: UIColorPickerViewControllerDelegate {
     func colorPickerViewControllerDidFinish(_ viewController: UIColorPickerViewController) {
         let color = viewController.selectedColor
         colorView.backgroundColor = color
@@ -226,7 +279,7 @@ extension CreateHabitView: UIColorPickerViewControllerDelegate {
 }
 
 //MARK: - CreateHabitView: UIPickerViewDelegate
-extension CreateHabitView: UIPickerViewDelegate {
+extension CreateOrEditHabitView: UIPickerViewDelegate {
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
         switch component {
         case 0: return time.hours[row]
@@ -249,7 +302,7 @@ extension CreateHabitView: UIPickerViewDelegate {
 }
 
 //MARK: - CreateHabitView: UIPickerViewDataSource
-extension CreateHabitView: UIPickerViewDataSource {
+extension CreateOrEditHabitView: UIPickerViewDataSource {
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         switch component {
         case 0: return time.hours.count
@@ -265,7 +318,7 @@ extension CreateHabitView: UIPickerViewDataSource {
 }
 
 //MARK: - CreateHabitView: UITextFieldDelegate
-extension CreateHabitView: UITextFieldDelegate {
+extension CreateOrEditHabitView: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true

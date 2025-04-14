@@ -13,22 +13,22 @@ final class TabBarViewController: UITabBarController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupTabBar()
         setupControllers()
+        setupTabBar()
     }
     
     private func setupControllers() {
         let habitsVC = HabitsViewController(store: store)
         habitsVC.tabBarItem = UITabBarItem(
-            title: "Привычки",
-            image: UIImage(named: "habits_tab_icon"),
+            title: Constants.Text.TabBarTitle.habits,
+            image: UIImage(named: Constants.Image.TabBar.habits),
             selectedImage: nil
         )
-        
+
         let infoVC = InfoViewController()
         infoVC.tabBarItem = UITabBarItem(
-            title: "Информация",
-            image: UIImage(systemName: "info.circle.fill"),
+            title: Constants.Text.TabBarTitle.info,
+            image: UIImage(systemName: Constants.Image.TabBar.info),
             selectedImage: nil
         )
         

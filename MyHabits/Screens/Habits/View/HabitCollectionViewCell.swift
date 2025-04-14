@@ -15,7 +15,6 @@ final class HabitCollectionViewCell: UICollectionViewCell {
         label.font = .systemFont(ofSize: 17, weight: .medium)
         label.numberOfLines = 2
         label.textColor = .systemBlue
-        label.text = "Habit Name"
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -24,7 +23,6 @@ final class HabitCollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         label.font = .systemFont(ofSize: 12, weight: .regular)
         label.textColor = .systemGray2
-        label.text = "Каждый день в 7:30"
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -33,7 +31,6 @@ final class HabitCollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         label.font = .systemFont(ofSize: 13, weight: .regular)
         label.textColor = .systemGray
-        label.text = "Счётчик: 0"
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
