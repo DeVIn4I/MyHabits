@@ -17,6 +17,7 @@ final class DetailsHabitViewController: UIViewController {
     //MARK: - Private Computed Properties
     private lazy var dateListTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         tableView.allowsSelection = false
         tableView.dataSource = self
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -99,7 +100,7 @@ extension DetailsHabitViewController: UITableViewDataSource {
         let formattedDate = store.trackDateString(forIndex: index ?? 0) ?? ""
         let isTracked = store.habit(habit, isTrackedIn: date)
         
-        let cell = UITableViewCell()
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         var configure = cell.defaultContentConfiguration()
         configure.text = formattedDate
         cell.contentConfiguration = configure
